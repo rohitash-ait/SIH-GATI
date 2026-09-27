@@ -19,9 +19,12 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173')
-  .split(',')
-  .map((origin) => origin.trim())
+const allowedOrigins = [
+  ...(process.env.FRONTEND_URL || 'http://localhost:5173').split(','),
+  process.env.RENDER_EXTERNAL_URL,
+]
+  .filter(Boolean)
+  .map((origin) => origin.trim().replace(/\/$/, ''))
   .filter(Boolean);
 
 app.use(cors({
